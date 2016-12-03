@@ -1016,6 +1016,16 @@ func (r *Resolver) FindPkg(name string) *PkgInfo {
 	//return info
 	//}
 	//}
+	// Check $GOROOT
+	for _, rr := range filepath.SplitList(r.BuildContext.GOROOT) {
+		p = filepath.Join(rr, "src", filepath.FromSlash(name))
+		if pkgExists(p) {
+			info.Path = p
+			info.Loc = LocGoroot
+			r.findCache[name] = info
+			return info
+		}
+	}
 
 	// Check $GOPATH
 	for _, rr := range filepath.SplitList(r.BuildContext.GOPATH) {
@@ -1023,17 +1033,6 @@ func (r *Resolver) FindPkg(name string) *PkgInfo {
 		if pkgExists(p) {
 			info.Path = p
 			info.Loc = LocGopath
-			r.findCache[name] = info
-			return info
-		}
-	}
-
-	// Check $GOROOT
-	for _, rr := range filepath.SplitList(r.BuildContext.GOROOT) {
-		p = filepath.Join(rr, "src", filepath.FromSlash(name))
-		if pkgExists(p) {
-			info.Path = p
-			info.Loc = LocGoroot
 			r.findCache[name] = info
 			return info
 		}
