@@ -22,6 +22,9 @@ import (
 // This is not concurrently safe which is ok for the current application. If
 // other needs arise it may need to be re-written.
 var ResolveCurrent = false
+var goGetCli *http.Client = &http.Client{
+	Timeout: 5 * time.Second,
+}
 
 func init() {
 	http.DefaultClient.Timeout = 5 * time.Second
@@ -86,7 +89,7 @@ func getRootFromGoGet(pkg string) string {
 		u.RawQuery = u.RawQuery + "&go-get=1"
 	}
 	checkURL := u.String()
-	resp, err := http.Get(checkURL)
+	resp, err := goGetCli.Get(checkURL)
 	if err != nil {
 		addToRemotePackageCache(pkg, pkg)
 		return pkg
