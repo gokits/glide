@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/Masterminds/vcs"
 )
@@ -23,6 +24,7 @@ import (
 var ResolveCurrent = false
 
 func init() {
+	http.DefaultClient.Timeout = 5 * time.Second
 	// Precompile the regular expressions used to check VCS locations.
 	for _, v := range vcsList {
 		v.regex = regexp.MustCompile(v.pattern)
